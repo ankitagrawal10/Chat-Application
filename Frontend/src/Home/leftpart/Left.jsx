@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Search from "./Search";
 import User from "./User";
+import Logout from "./Logout";
 
 function Left() {
   const [width, setWidth] = useState(30);
@@ -47,6 +48,7 @@ function Left() {
       <div style={{ padding: "10px", flexGrow: 1 }}>
         <Search />
         <User />
+        <Logout />
       </div>
       <div
         className={`absolute top-0 right-0 w-[5px] h-full cursor-ew-resize z-10 transition-colors ease-linear duration-200 

@@ -10,7 +10,7 @@ function Users() {
           </div>
         </div>
         <div>
-          <h1>Akhil</h1>
+          <h1 className="font-bold">Akhil</h1>
           <span>akhil@gmail.com</span>
         </div>
       </div>
