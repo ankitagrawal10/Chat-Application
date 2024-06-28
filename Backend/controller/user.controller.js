@@ -1,6 +1,9 @@
 import User from "../user/user.model.js";
 import bcrypt from "bcryptjs";
 import { createTokenAndSaveCookie } from "../jwt/generateToken.js";
+import { sendMail } from "../verification/mailer.js";
+import { generateOTP } from "../helper/generateOtp.js";
+
 const Signup = async (req, res) => {
   const { fullName, email, password, confirmPassword } = req.body;
 
@@ -16,15 +19,29 @@ const Signup = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
+    const otp = generateOTP();
+    const otpExpire = Date.now() + 3600000; // 1 hr
+
     const newuser = await new User({
       fullName,
       email,
-      password:hashPassword,
+      password: hashPassword,
+      otp,
+      otpExpire,
     });
     await newuser.save();
+
+    await sendMail(email, "Your OTP Code", `your OTP is ${otp}`);
+
     if (newuser) {
       createTokenAndSaveCookie(newuser._id, res);
-      res.status(201).json({ message: "User created Successfully", newuser });
+      res
+        .status(201)
+        .json({
+          message:
+            "User created successfully. Please check your email for the OTP.",
+          newuser,
+        });
     }
   } catch (error) {
     console.log(error);
@@ -54,13 +71,13 @@ const Login = async (req, res) => {
   }
 };
 
-const Logout = async(req,res)=>{
+const Logout = async (req, res) => {
   try {
-    res.clearCookie("jwt")
-    res.status(201).json({message:"User logout Successfully"})
+    res.clearCookie("jwt");
+    res.status(201).json({ message: "User logout Successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({error:"internal server error"})
+    res.status(500).json({ error: "internal server error" });
   }
-}
-export { Signup, Login ,Logout};
+};
+export { Signup, Login, Logout };

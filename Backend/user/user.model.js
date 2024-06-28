@@ -21,6 +21,14 @@ const userSchema = mongoose.Schema(
     confirmPassword: {
       type: String,
     },
+
+    otp: {
+      type: String,
+    },
+
+    otpExpire: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
