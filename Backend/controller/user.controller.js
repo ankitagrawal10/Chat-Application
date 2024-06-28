@@ -19,7 +19,7 @@ const Signup = async (req, res) => {
     const newuser = await new User({
       fullName,
       email,
-      password: hashPassword,
+      password:hashPassword,
     });
     await newuser.save();
     if (newuser) {
@@ -53,4 +53,14 @@ const Login = async (req, res) => {
     console.log(error);
   }
 };
-export { Signup, Login };
+
+const Logout = async(req,res)=>{
+  try {
+    res.clearCookie("jwt")
+    res.status(201).json({message:"User logout Successfully"})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error:"internal server error"})
+  }
+}
+export { Signup, Login ,Logout};

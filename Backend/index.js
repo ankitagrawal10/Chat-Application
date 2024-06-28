@@ -8,7 +8,7 @@ const app = express();
 dotenv.config();
 app.use(express.json());
 
-const port = 5000;
+const port =3000;
 const uri = process.env.MONOGODB_URI;
 
 try {
