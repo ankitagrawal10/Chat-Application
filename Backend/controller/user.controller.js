@@ -17,32 +17,21 @@ const Signup = async (req, res) => {
       return res.status(400).json({ error: "user already registered" });
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
-
     const otp = generateOTP();
-    const otpExpire = Date.now() + 3600000; // 1 hr
+    const otpExpire = Date.now() + 60000;
 
-    const newuser = await new User({
-      fullName,
-      email,
-      password: hashPassword,
-      otp,
-      otpExpire,
+    req.session.tempUser = { fullName, email, password, otp, otpExpire };
+
+    const htmlContent = `
+    <p>Your OTP is <b>${otp}</b> and expires within 1 minute.</p>
+  `;
+
+    await sendMail(email, "Your OTP Code", htmlContent);
+
+    res.status(200).json({
+      message: "OTP sent to your email. Please verify to complete the signup.",
     });
-    await newuser.save();
-
-    await sendMail(email, "Your OTP Code", `your OTP is ${otp}`);
-
-    if (newuser) {
-      createTokenAndSaveCookie(newuser._id, res);
-      res
-        .status(201)
-        .json({
-          message:
-            "User created successfully. Please check your email for the OTP.",
-          newuser,
-        });
-    }
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "something went wrong" });
@@ -80,4 +69,42 @@ const Logout = async (req, res) => {
     res.status(500).json({ error: "internal server error" });
   }
 };
-export { Signup, Login, Logout };
+
+const VerifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const tempUser = req.session.tempUser;
+    if (
+      !tempUser ||
+      tempUser.email != email ||
+      tempUser.otpExpire < Date.now() ||
+      tempUser.otp !== otp
+    ) {
+      return res.status(400).json({ error: "invalid or expire otp" });
+    }
+
+    const hashPassword = await bcrypt.hash(tempUser.password, 10);
+    const newUser = new User({
+      fullName: tempUser.fullName,
+      email: tempUser.email,
+      password: hashPassword,
+    });
+    await newUser.save();
+
+    req.session.tempUser = null;
+    createTokenAndSaveCookie(newUser._id, res);
+    res.status(201).json({
+      message: "Signup completed successfully. You are now signed in.",
+      user: {
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export { Signup, Login, Logout, VerifyOTP };
