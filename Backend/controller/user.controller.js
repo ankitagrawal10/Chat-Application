@@ -31,7 +31,6 @@ const Signup = async (req, res) => {
     res.status(200).json({
       message: "OTP sent to your email. Please verify to complete the signup.",
     });
-    
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "something went wrong" });
@@ -74,13 +73,15 @@ const VerifyOTP = async (req, res) => {
   const { email, otp } = req.body;
   try {
     const tempUser = req.session.tempUser;
+    if (!tempUser) {
+      return res.status(400).json({ error: "No OTP session found" });
+    }
     if (
-      !tempUser ||
-      tempUser.email != email ||
+      tempUser.email.toLowerCase() !== email.toLowerCase() ||
       tempUser.otpExpire < Date.now() ||
       tempUser.otp !== otp
     ) {
-      return res.status(400).json({ error: "invalid or expire otp" });
+      return res.status(400).json({ error: "Invalid or expired OTP" });
     }
 
     const hashPassword = await bcrypt.hash(tempUser.password, 10);

@@ -1,12 +1,16 @@
 import React from 'react'
 import Left from './Home/leftpart/Left'
 import Right from './Home/rightpart/Right'
+import Signup from './components/Signup'
+import Login from './components/Login'
 
 function App() {
   return (
-    <div className='flex h-screen'>
-      <Left/>
-      <Right/>
+    <div className=''>
+      {/* <Left/>
+      <Right/> */}
+      <Signup/>
+      {/* <Login/> */}
     </div>
   )
 }
