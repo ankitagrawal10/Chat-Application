@@ -12,7 +12,7 @@ function Signup() {
 
   const [otpSent, setOtpSent] = useState(false);
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const password = watch("password", "");
   const confirmPassword = watch("confirmPassword", "");
@@ -22,14 +22,18 @@ function Signup() {
   };
 
   const onSubmit = async (data) => {
+    setLoading(true);
     if (!otpSent) {
       try {
-        const response = await axios.post("http://localhost:3000/user/signup", {
-          fullName: data.fullName,
-          email: data.email,
-          password: data.password,
-          confirmPassword: data.confirmPassword,
-        });
+        const response = await axios.post(
+          "http://localhost:3000/user/signup",
+          {
+            fullName: data.fullName,
+            email: data.email,
+            password: data.password,
+            confirmPassword: data.confirmPassword,
+          }
+        );
         if (response) {
           alert("OTP has been sent to your email");
           setOtpSent(true);
@@ -38,6 +42,8 @@ function Signup() {
       } catch (error) {
         console.error("Signup Error:", error);
         alert("Error sending OTP. Please check your details and try again.");
+      } finally {
+        setLoading(false);
       }
     } else {
       try {
@@ -45,7 +51,8 @@ function Signup() {
         console.log("OTP verification data:", otpData);
         const response = await axios.post(
           "http://localhost:3000/user/verifyotp",
-          otpData
+          otpData,
+          { withCredentials: true }
         );
         if (response.data.success) {
           alert("Signup successful");
@@ -60,6 +67,8 @@ function Signup() {
           console.error("Response headers:", error.response.headers);
         }
         alert("Error verifying OTP. Please try again.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -91,12 +100,12 @@ function Signup() {
                 type="text"
                 className="grow"
                 placeholder="Fullname"
-                {...register("fullName", { required: true })}
+                {...register("fullName", { required: "Full name is required" })}
               />
             </label>
             {errors.fullName && (
               <span className="text-red-500 text-sm">
-                This field is required
+                {errors.fullName.message}
               </span>
             )}
             {/* Email */}
@@ -114,13 +123,11 @@ function Signup() {
                 type="email"
                 className="grow"
                 placeholder="Email"
-                {...register("email", { required: true })}
+                {...register("email", { required: "Email is required" })}
               />
             </label>
             {errors.email && (
-              <span className="text-red-500 text-sm">
-                This field is required
-              </span>
+              <span className="text-red-500 text-sm">{errors.email.message}</span>
             )}
             {/* Password */}
             <label className="input input-bordered flex items-center gap-2">
@@ -140,13 +147,11 @@ function Signup() {
                 type="password"
                 className="grow"
                 placeholder="Password"
-                {...register("password", { required: true })}
+                {...register("password", { required: "Password is required" })}
               />
             </label>
             {errors.password && (
-              <span className="text-red-500 text-sm">
-                This field is required
-              </span>
+              <span className="text-red-500 text-sm">{errors.password.message}</span>
             )}
             {/* Confirm Password */}
             <label className="input input-bordered flex items-center gap-2">
@@ -167,7 +172,7 @@ function Signup() {
                 className="grow"
                 placeholder="Confirm Password"
                 {...register("confirmPassword", {
-                  required: true,
+                  required: "Please confirm your password",
                   validate: validatePasswordMatch,
                 })}
               />
@@ -198,13 +203,11 @@ function Signup() {
                 type="text"
                 className="grow"
                 placeholder="Enter OTP"
-                {...register("otp", { required: true })}
+                {...register("otp", { required: "OTP is required" })}
               />
             </label>
             {errors.otp && (
-              <span className="text-red-500 text-sm">
-                This field is required
-              </span>
+              <span className="text-red-500 text-sm">{errors.otp.message}</span>
             )}
           </>
         )}
@@ -216,11 +219,15 @@ function Signup() {
               Login
             </span>
           </p>
-          <input
+          <button
             type="submit"
-            value={otpSent ? "Verify OTP" : "Signup"}
-            className="text-white bg-green-500 px-4 py-1 rounded-lg cursor-pointer"
-          />
+            className={`text-white bg-green-500 px-4 py-1 rounded-lg ${
+              loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : otpSent ? "Verify OTP" : "Signup"}
+          </button>
         </div>
       </form>
     </div>
