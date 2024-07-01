@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useAuth } from "../context/Authprovider.jsx";
+import { Link } from "react-router-dom";
 
 function Signup() {
+  const [authUser, setAuthUser] = useAuth();
   const {
     register,
     handleSubmit,
@@ -32,16 +36,19 @@ function Signup() {
             email: data.email,
             password: data.password,
             confirmPassword: data.confirmPassword,
-          },{ withCredentials: true }
+          },
+          { withCredentials: true }
         );
         if (response) {
-          alert("OTP has been sent to your email");
+          toast.success("OTP has been sent to your email");
           setOtpSent(true);
           setEmail(data.email);
         }
       } catch (error) {
         console.error("Signup Error:", error);
-        alert("Error sending OTP. Please check your details and try again.");
+        toast.error(
+          "Error sending OTP. Please check your details and try again."
+        );
       } finally {
         setLoading(false);
       }
@@ -54,11 +61,13 @@ function Signup() {
           otpData,
           { withCredentials: true }
         );
-        if (response.data.success) {
-          alert("Signup successful");
+        if (response) {
+          toast.success("Signup successful");
         } else {
-          alert(response.data.message || "Invalid OTP");
+          toast.error(response.data.message || "Invalid OTP");
         }
+        localStorage.setItem("ChatApp", JSON.stringify(response.data));
+        setAuthUser(response.data);
       } catch (error) {
         console.error("OTP Verification Error:", error);
         if (error.response) {
@@ -66,7 +75,7 @@ function Signup() {
           console.error("Response status:", error.response.status);
           console.error("Response headers:", error.response.headers);
         }
-        alert("Error verifying OTP. Please try again.");
+        toast.error("Error verifying OTP. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -127,7 +136,9 @@ function Signup() {
               />
             </label>
             {errors.email && (
-              <span className="text-red-500 text-sm">{errors.email.message}</span>
+              <span className="text-red-500 text-sm">
+                {errors.email.message}
+              </span>
             )}
             {/* Password */}
             <label className="input input-bordered flex items-center gap-2">
@@ -151,7 +162,9 @@ function Signup() {
               />
             </label>
             {errors.password && (
-              <span className="text-red-500 text-sm">{errors.password.message}</span>
+              <span className="text-red-500 text-sm">
+                {errors.password.message}
+              </span>
             )}
             {/* Confirm Password */}
             <label className="input input-bordered flex items-center gap-2">
@@ -215,9 +228,12 @@ function Signup() {
         <div className="flex justify-between">
           <p>
             Have an account?{" "}
-            <span className="text-blue-500 underline cursor-pointer ml-1">
+            <Link
+              to="/login"
+              className="text-blue-500 underline cursor-pointer ml-1"
+            >
               Login
-            </span>
+            </Link>
           </p>
           <button
             type="submit"

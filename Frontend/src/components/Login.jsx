@@ -1,10 +1,45 @@
+import axios from "axios";
 import React from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useAuth } from "../context/Authprovider";
+import { Link } from "react-router-dom";
 
 function Login() {
+  const [authUser,setAuthUser] = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+    axios
+      .post("http://localhost:3000/user/login", userInfo)
+      .then((response) => {
+        if (response) {
+          toast.success("Login Successfully");
+        }
+        localStorage.setItem("ChatApp",JSON.stringify(response.data))
+        setAuthUser(response.data);
+
+      })
+      .catch((error) => {
+        if (error.response) {
+          toast.error("Please try again later");
+        }
+      });
+  };
+
   return (
     <>
       <div className="flex h-screen items-center justify-center">
         <form
+          onSubmit={handleSubmit(onSubmit)}
           action=""
           className="border border-white px-6 py-2 rounded-md space-y-3 w-96"
         >
@@ -24,8 +59,16 @@ function Login() {
               <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
               <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
             </svg>
-            <input type="text" className="grow" placeholder="Email" />
+            <input
+              type="text"
+              className="grow"
+              placeholder="Email"
+              {...register("email", { required: "Email is required" })}
+            />
           </label>
+          {errors.email && (
+            <span className="text-red-500 text-sm">{errors.email.message}</span>
+          )}
           {/* Password */}
           <label className="input input-bordered flex items-center gap-2">
             <svg
@@ -40,15 +83,25 @@ function Login() {
                 clipRule="evenodd"
               />
             </svg>
-            <input type="password" className="grow" placeholder="password" />
+            <input
+              type="password"
+              className="grow"
+              placeholder="password"
+              {...register("password", { required: "Password is required" })}
+            />
           </label>
+          {errors.password && (
+            <span className="text-red-500 text-sm">
+              {errors.password.message}
+            </span>
+          )}
           {/* Text button */}
           <div className="flex justify-between">
             <p>
               New User?{" "}
-              <span className="text-blue-500 underline cursor-pointer ml-1">
+              <Link to="/signup" className="text-blue-500 underline cursor-pointer ml-1">
                 Signup
-              </span>
+              </Link>
             </p>
             <input
               type="submit"
