@@ -32,7 +32,7 @@ function Signup() {
             email: data.email,
             password: data.password,
             confirmPassword: data.confirmPassword,
-          }
+          },{ withCredentials: true }
         );
         if (response) {
           alert("OTP has been sent to your email");
