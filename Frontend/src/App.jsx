@@ -5,6 +5,7 @@ import Signup from "./components/Signup";
 import Login from "./components/Login";
 import { useAuth } from "./context/Authprovider";
 import { Routes, Route, Navigate } from "react-router-dom";
+import Resetpage from "./components/Resetpage";
 
 function App() {
   const [authUser, setauthUser] = useAuth();
@@ -33,6 +34,7 @@ function App() {
         path="/signup"
         element={authUser ? <Navigate to="/" /> : <Signup />}
       />
+      <Route path="/resetpage" element={<Resetpage />} />
     </Routes>
   );
 }

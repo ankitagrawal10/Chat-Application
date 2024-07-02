@@ -108,4 +108,106 @@ const VerifyOTP = async (req, res) => {
   }
 };
 
-export { Signup, Login, Logout, VerifyOTP };
+const Reset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid user credentials" });
+    }
+
+    const otp = generateOTP();
+    const otpExpire = Date.now() + 60000;
+
+    req.session.tempDetail = { otp, otpExpire, email };
+    const htmlContent = `
+      <p>Your OTP is <b>${otp}</b> and expires within 1 minute.</p>
+    `;
+
+    await sendMail(email, "Your OTP Code", htmlContent);
+
+    res.status(200).json({
+      message: "OTP sent to your email. Please verify to reset the password.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const verifyForTest = async (req, res) => {
+  const { otp } = req.body;
+
+  try {
+    const tempDetail = req.session.tempDetail;
+    if (!tempDetail) {
+      console.log("No tempDetail found in session");
+      return res.status(400).json({ error: "Temp user not found" });
+    }
+
+    if (tempDetail.otp !== otp) {
+      console.log("Invalid OTP provided");
+      return res.status(400).json({ error: "Invalid OTP, please try again later" });
+    }
+
+    if (tempDetail.otpExpire < Date.now()) {
+      console.log("OTP has expired");
+      return res.status(400).json({ error: "OTP has expired, please try again later" });
+    }
+
+    return res.status(200).json({ message: "OTP verified successfully" });
+  } catch (error) {
+    console.log("Error in verifyForTest:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+
+const resetPassword = async (req, res) => {
+  const { newPassword, confirmPassword } = req.body; // Corrected variable names
+
+  console.log("Reset password request received with: ", req.body); // Log the request body
+
+  try {
+    if (newPassword !== confirmPassword) {
+      console.log("Passwords do not match");
+      return res.status(400).json({ error: "Passwords do not match" });
+    }
+
+    const tempDetail = req.session.tempDetail;
+    if (!tempDetail) {
+      console.log("Session expired or tempDetail not found");
+      return res.status(400).json({ error: "Session expired. Please start the process again." });
+    }
+
+    const user = await User.findOne({ email: tempDetail.email });
+    if (!user) {
+      console.log("User not found for email:", tempDetail.email);
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashNewPassword;
+
+    await user.save();
+    req.session.destroy();
+
+    res.status(200).json({
+      message: "Password successfully changed",
+    });
+  } catch (error) {
+    console.log("Error resetting password:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+
+export {
+  Signup,
+  Login,
+  Logout,
+  VerifyOTP,
+  Reset,
+  verifyForTest,
+  resetPassword,
+};

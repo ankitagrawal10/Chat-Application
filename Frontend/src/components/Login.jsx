@@ -6,7 +6,7 @@ import { useAuth } from "../context/Authprovider";
 import { Link } from "react-router-dom";
 
 function Login() {
-  const [authUser,setAuthUser] = useAuth();
+  const [authUser, setAuthUser] = useAuth();
   const {
     register,
     handleSubmit,
@@ -24,9 +24,8 @@ function Login() {
         if (response) {
           toast.success("Login Successfully");
         }
-        localStorage.setItem("ChatApp",JSON.stringify(response.data))
+        localStorage.setItem("ChatApp", JSON.stringify(response.data));
         setAuthUser(response.data);
-
       })
       .catch((error) => {
         if (error.response) {
@@ -99,7 +98,10 @@ function Login() {
           <div className="flex justify-between">
             <p>
               New User?{" "}
-              <Link to="/signup" className="text-blue-500 underline cursor-pointer ml-1">
+              <Link
+                to="/signup"
+                className="text-blue-500 underline cursor-pointer ml-1"
+              >
                 Signup
               </Link>
             </p>
@@ -108,6 +110,14 @@ function Login() {
               value="Login"
               className="text-white bg-green-500 px-4 py-1 rounded-lg cursor-pointer"
             />
+          </div>
+          <div>
+            <Link
+              to="/resetpage"
+              className="text-white-500 cursor-pointer ml-1 border-2 px-24 py-1 rounded-md w-full bg-red-500 border-none"
+            >
+              Forget Password
+            </Link>
           </div>
         </form>
       </div>
