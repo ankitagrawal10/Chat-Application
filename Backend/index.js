@@ -5,11 +5,14 @@ import userRoute from "./routes/user.route.js";
 import session from "express-session";
 import cors from "cors";
 import { v4 as uuidv4 } from 'uuid';
+import cookieParser from "cookie-parser"
 
 const app = express();
 
 dotenv.config();
 app.use(express.json());
+app.use(cookieParser());
+
 app.use(cors({
   origin: ['http://localhost:5173'], 
   credentials:true
@@ -35,7 +38,7 @@ app.use(session({
   cookie: { secure: false } 
 }));
 
-app.use("/user", userRoute);
+app.use("/api/user", userRoute);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

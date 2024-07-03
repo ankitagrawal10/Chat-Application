@@ -7,7 +7,9 @@ import {
   Reset,
   resetPassword,
   verifyForTest,
+  allUsers,
 } from "../controller/user.controller.js";
+import secureRoute from "../middleware/secureRoute.js";
 
 const router = express.Router();
 
@@ -18,5 +20,6 @@ router.post("/verifyotp", VerifyOTP);
 router.post("/reset", Reset);
 router.post("/verifyfortest", verifyForTest);
 router.post("/resetPassword", resetPassword);
+router.get("/allusers", secureRoute, allUsers);
 
 export default router;

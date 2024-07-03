@@ -5,12 +5,16 @@ import Typesend from "./Typesend";
 
 function Right() {
   return (
-    <div className="w-[100%] bg-slate-900 text-gray-300">
-      <Chatuser />
-       <div className="flex-1 overflow-y-auto" style={{ maxHeight: "calc(92vh - 8vh)" }}>
-       <Messages />
-       </div>
-      <Typesend/>
+    <div className="w-full bg-slate-900 text-gray-300 flex flex-col h-screen">
+      <div className="flex-shrink-0">
+        <Chatuser />
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        <Messages />
+      </div>
+      <div className="flex-shrink-0">
+        <Typesend />
+      </div>
     </div>
   );
 }

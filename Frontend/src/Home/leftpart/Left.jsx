@@ -43,13 +43,17 @@ function Left() {
         position: "relative",
         height: "100vh",
         display: "flex",
+        flexDirection: "column",
       }}
     >
-      <div style={{ padding: "10px", flexGrow: 1 }}>
-        <Search />
+      <Search />
+      <div
+        className="flex-1 overflow-y-auto"
+        style={{ maxHeight: "calc(84vh - 10vh)" }}
+      >
         <User />
-        <Logout />
       </div>
+      <Logout />
       <div
         className={`absolute top-0 right-0 w-[5px] h-full cursor-ew-resize z-10 transition-colors ease-linear duration-200 
         ${isDragging ? "bg-white" : "bg-transparent hover:bg-white"}`}

@@ -147,12 +147,16 @@ const verifyForTest = async (req, res) => {
 
     if (tempDetail.otp !== otp) {
       console.log("Invalid OTP provided");
-      return res.status(400).json({ error: "Invalid OTP, please try again later" });
+      return res
+        .status(400)
+        .json({ error: "Invalid OTP, please try again later" });
     }
 
     if (tempDetail.otpExpire < Date.now()) {
       console.log("OTP has expired");
-      return res.status(400).json({ error: "OTP has expired, please try again later" });
+      return res
+        .status(400)
+        .json({ error: "OTP has expired, please try again later" });
     }
 
     return res.status(200).json({ message: "OTP verified successfully" });
@@ -161,7 +165,6 @@ const verifyForTest = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
-
 
 const resetPassword = async (req, res) => {
   const { newPassword, confirmPassword } = req.body; // Corrected variable names
@@ -177,7 +180,9 @@ const resetPassword = async (req, res) => {
     const tempDetail = req.session.tempDetail;
     if (!tempDetail) {
       console.log("Session expired or tempDetail not found");
-      return res.status(400).json({ error: "Session expired. Please start the process again." });
+      return res
+        .status(400)
+        .json({ error: "Session expired. Please start the process again." });
     }
 
     const user = await User.findOne({ email: tempDetail.email });
@@ -201,6 +206,17 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const allUsers = async (req, res) => {
+  try {
+    const loggedInUser = req.user._id;
+    const filterUser = await User.find({ _id: { $ne: loggedInUser } }).select(
+      "-password"
+    );
+    res.status(201).json(filterUser);
+  } catch (error) {
+    console.log("Error in allUsers constroller:" + error);
+  }
+};
 
 export {
   Signup,
@@ -210,4 +226,5 @@ export {
   Reset,
   verifyForTest,
   resetPassword,
+  allUsers,
 };

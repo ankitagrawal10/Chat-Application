@@ -30,7 +30,7 @@ function Signup() {
     if (!otpSent) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/user/signup",
+          "/api/user/signup",
           {
             fullName: data.fullName,
             email: data.email,
@@ -57,7 +57,7 @@ function Signup() {
         const otpData = { email, otp: data.otp };
         console.log("OTP verification data:", otpData);
         const response = await axios.post(
-          "http://localhost:3000/user/verifyotp",
+          "/api/user/verifyotp",
           otpData,
           { withCredentials: true }
         );

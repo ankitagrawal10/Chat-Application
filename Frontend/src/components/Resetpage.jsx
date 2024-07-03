@@ -25,7 +25,7 @@ function Resetpage() {
       try {
         const info = { email: data.email };
         const response = await axios.post(
-          "http://localhost:3000/user/reset",
+          "/api/user/reset",
           info,
           { withCredentials: true }
         );
@@ -45,7 +45,7 @@ function Resetpage() {
       try {
         const info = { otp: data.otp };
         const response = await axios.post(
-          "http://localhost:3000/user/verifyfortest",
+          "/api/user/verifyfortest",
           info,
           { withCredentials: true }
         );
@@ -73,7 +73,7 @@ function Resetpage() {
         };
         console.log("Sending reset password request with info:", info); // Debugging info
         const response = await axios.post(
-          "http://localhost:3000/user/resetPassword",
+          "/api/user/resetPassword",
           info,
           { withCredentials: true }
         );
