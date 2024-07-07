@@ -1,4 +1,4 @@
-import User from "../user/user.model.js";
+import User from "../model/user.model.js";
 import bcrypt from "bcryptjs";
 import { createTokenAndSaveCookie } from "../jwt/generateToken.js";
 import { sendMail } from "../verification/mailer.js";
