@@ -7,8 +7,9 @@ import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
 import cookieParser from "cookie-parser";
 import messageRoute from "./routes/message.route.js";
+import { app, server } from "./SocketIo/server.js";
 
-const app = express();
+
 
 dotenv.config();
 app.use(express.json());
@@ -44,6 +45,6 @@ app.use(
 app.use("/api/user", userRoute);
 app.use("/api/message", messageRoute);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
