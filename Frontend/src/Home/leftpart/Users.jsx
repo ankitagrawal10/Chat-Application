@@ -27,7 +27,7 @@ function Users({ users }) {
         </div>
         <div className="flex-1 overflow-hidden">
           <h1 className="font-bold truncate mt-2">{users.fullName}</h1>
-          <span className="block truncate">{users.email}</span>
+          {/* <span className="block truncate">{users.email}</span> */}
         </div>
       </div>
     </div>
