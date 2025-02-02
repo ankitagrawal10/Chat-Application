@@ -19,7 +19,7 @@ function Chatuser() {
           <div className="avatar">
             <div className="w-12 md:w-16 rounded-full">
               <img
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 alt="User Avatar"
               />
             </div>

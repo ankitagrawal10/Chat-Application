@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  backend:
+    image: ankit998/backend_img
+    container_name: chat_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    env_file:
+      - ./Backend/.env
+    networks:
+      - chat_networks
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  frontend:
+    image: ankit998/front_img
+    container_name: chat_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - chat_networks
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5173" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./path/to/your/mongod.conf:/etc/mongo/mongod.conf:ro
+    networks:
+      - chat_networks
+    command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
+
+volumes:
+  mongo_data:
+
+networks:
+  chat_networks:
