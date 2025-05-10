@@ -1,8 +1,6 @@
-version: "3.9"
-
 services:
   backend:
-    image: ankit998/backend_img
+    image: ankit998/back_img
     container_name: chat_backend
     ports:
       - "3000:3000"
@@ -10,8 +8,6 @@ services:
       - mongo
     env_file:
       - ./Backend/.env
-    networks:
-      - chat_networks
     restart: always
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
@@ -19,6 +15,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    command: npm start
 
   frontend:
     image: ankit998/front_img
@@ -27,8 +24,8 @@ services:
       - "5173:5173"
     depends_on:
       - backend
-    networks:
-      - chat_networks
+    environment:
+      - VITE_BACKEND_URL=http://backend:3000
     restart: always
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:5173" ]
@@ -42,15 +39,30 @@ services:
     container_name: mongo_db
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - mongo_data:/data/db
-      - ./path/to/your/mongod.conf:/etc/mongo/mongod.conf:ro
-    networks:
-      - chat_networks
-    command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    container_name: nginx_container
+    ports:
+      - "80:80" 
+    volumes:
+      - ./nginx_log:/var/log/nginx
+      #  - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      #  - ./frontend/dist:/usr/share/nginx/html
+
+    depends_on:
+      - backend
+    restart: always
+  
 
 volumes:
   mongo_data:
+    driver: local
 
-networks:
-  chat_networks:

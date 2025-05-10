@@ -11,8 +11,9 @@ function useGetAllUser() {
       setLoading(true);
       try {
         const token = Cookies.get("jwt");
-        const response = await axios.get("/api/user/allusers", {
-          Credentials: "include",
+        const response = await axios.get("http://chatapp.com/api/user/allusers", {
+          // Credentials: "include",
+          withCredentials: true, // for sending cookies
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -20,7 +21,7 @@ function useGetAllUser() {
         setUsers(response.data);
         setLoading(false);
       } catch (error) {
-        console.log("Error in alluser" + error);
+        console.error("Error in alluser:", error.response?.data || error.message);
       }
     };
     getUsers();

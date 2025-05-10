@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "http://chat_frontend:5173","http://chatapp.com"],
     credentials: true,
   })
 );
@@ -45,6 +45,6 @@ app.use(
 app.use("/api/user", userRoute);
 app.use("/api/message", messageRoute);
 
-server.listen(port, () => {
+server.listen(port,'0.0.0.0', () => {
   console.log(`Example app listening on port ${port}`);
 });
