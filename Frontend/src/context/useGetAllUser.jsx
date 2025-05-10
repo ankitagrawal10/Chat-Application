@@ -11,7 +11,7 @@ function useGetAllUser() {
       setLoading(true);
       try {
         const token = Cookies.get("jwt");
-        const response = await axios.get("http://chatapp.com/api/user/allusers", {
+        const response = await axios.get("/api/user/allusers", {
           // Credentials: "include",
           withCredentials: true, // for sending cookies
           headers: {

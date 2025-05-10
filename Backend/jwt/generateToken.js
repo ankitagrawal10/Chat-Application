@@ -7,10 +7,11 @@ const createTokenAndSaveCookie = (userId, res) => {
 
   res.cookie("jwt", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: false,
+    sameSite: "Lax",
     // domain: ".chatapp.com",
   });
 };
 
 export { createTokenAndSaveCookie };
+

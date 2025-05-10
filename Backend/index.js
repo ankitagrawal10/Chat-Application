@@ -12,15 +12,18 @@ import { app, server } from "./SocketIo/server.js";
 
 
 dotenv.config();
-app.use(express.json());
+
+
 app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://chat_frontend:5173","http://chatapp.com"],
+    origin: ["http://localhost:5173", "http://chat_frontend:5173","http://chatapp.com:5173"],
     credentials: true,
   })
 );
+app.use(express.json());
+
 
 const port = 3000;
 const uri = process.env.MONOGODB_URI;
