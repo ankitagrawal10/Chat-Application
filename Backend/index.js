@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://chat_frontend:5173","http://chatapp.com:5173"],
+    origin: ["http://localhost:5173", "http://chat_frontend:5173","https://chatapp.com:5173"],
     credentials: true,
   })
 );
