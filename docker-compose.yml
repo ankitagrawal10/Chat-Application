@@ -9,6 +9,8 @@ services:
     env_file:
       - ./Backend/.env
     restart: always
+    networks:
+      - my_custom_network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
       interval: 5s
@@ -24,6 +26,8 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+    networks:
+      - my_custom_network
     environment:
       - VITE_BACKEND_URL=http://backend:3000
     restart: always
@@ -39,6 +43,8 @@ services:
     container_name: mongo_db
     ports:
       - "27017:27017"
+    networks:
+      - my_custom_network
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -50,6 +56,8 @@ services:
       context: .
       dockerfile: ./nginx/Dockerfile
     container_name: nginx_container
+    networks:
+      - my_custom_network
     ports:
       - "80:80" 
       - "443:443"
@@ -67,4 +75,8 @@ services:
 volumes:
   mongo_data:
     driver: local
+
+networks:
+ my_custom_network:
+   driver: bridge
 
